@@ -14,6 +14,7 @@
 
 xSemaphoreHandle conexaoWifiSemaphore;
 xSemaphoreHandle conexaoMQTTSemaphore;
+xSemaphoreHandle registerDeviceSemaphore;
 
 void conectadoWifi(void * params)
 {
@@ -28,7 +29,7 @@ void conectadoWifi(void * params)
 
 void trataComunicacaoComServidor(void * params)
 {
-  char mensagem[50];
+  //char mensagem[50];
   xSemaphoreTake(conexaoMQTTSemaphore, portMAX_DELAY);
 
   mqtt_register_device();
@@ -36,10 +37,10 @@ void trataComunicacaoComServidor(void * params)
   xSemaphoreTake(registerDeviceSemaphore, portMAX_DELAY);
   while(true) {
      int temperature = 20 + (int) ((float)rand()/(float)(RAND_MAX/10.0));
-     int umidity = 20 + (int) ((float)rand()/(float)(RAND_MAX/10.0));
+     int humidity = 20 + (int) ((float)rand()/(float)(RAND_MAX/10.0));
 
      mqtt_send_temperature(temperature);
-     mqtt_send_umidity(umidity);
+     mqtt_send_humidity(humidity);
      mqtt_send_state(1);
 
      vTaskDelay(2000 / portTICK_PERIOD_MS);
@@ -56,5 +57,5 @@ void app_main(void)
     wifi_start();
 
     xTaskCreate(&conectadoWifi,  "Conexão ao MQTT", 4096, NULL, 1, NULL);
-    xTaskCreate(&'trataComunicacaoComServidor', "Comunicação com Broker", 4096, NULL, 1, NULL);
+    xTaskCreate(&trataComunicacaoComServidor, "Comunicação com Broker", 4096, NULL, 1, NULL);
 }

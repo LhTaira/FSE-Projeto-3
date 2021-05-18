@@ -25,7 +25,7 @@
 
 #define TAG "MQTT"
 
-#define MATRICULA CONFIG_MATRICULA
+#define MATRICULA "170109208"
 
 #define TOPIC_REGISTER 0
 #define TOPIC_TEMPERATURE 1
@@ -51,7 +51,7 @@ char* get_mac_address() {
 }
 
 char* get_topic(int topic_id) {
-    static char *MAC_ADDRESS = get_mac_address();
+    char *MAC_ADDRESS = get_mac_address();
     char *topic = malloc(TOPIC_LEN);
 
     switch(topic_id) {
@@ -100,7 +100,7 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
             break;
         case MQTT_EVENT_DATA:
             ESP_LOGI(TAG, "MQTT_EVENT_DATA");
-            static char *register_topic = get_topic(TOPIC_REGISTER);
+            char *register_topic = get_topic(TOPIC_REGISTER);
 
             if(strcmp(event->topic, register_topic) == 0) {
                 cJSON *data_json = cJSON_Parse(event->data);
@@ -173,7 +173,7 @@ void mqtt_register_device() {
 void mqtt_send_temperature(int temperature) {
     char *topic = get_topic(TOPIC_TEMPERATURE);
     cJSON *temperature_json = cJSON_CreateObject();
-    cJSON_AddNumberToObject(temperature_json, "data", &temperature);
+    cJSON_AddNumberToObject(temperature_json, "data", (double)temperature);
 
     char *data = cJSON_Print(temperature_json);
 
@@ -184,10 +184,10 @@ void mqtt_send_temperature(int temperature) {
     free(data);
 }
 
-void mqtt_send_umidity(int umidity) {
-    char *topic = get_topic(TOPIC_UMIDITY);
+void mqtt_send_humidity(int umidity) {
+    char *topic = get_topic(TOPIC_HUMIDITY);
     cJSON *umidity_json = cJSON_CreateObject();
-    cJSON_AddNumberToObject(umidity_json, "data", &umidity);
+    cJSON_AddNumberToObject(umidity_json, "data", (double)umidity);
 
     char *data = cJSON_Print(umidity_json);
 
@@ -201,7 +201,7 @@ void mqtt_send_umidity(int umidity) {
 void mqtt_send_state(int state) {
     char *topic = get_topic(TOPIC_STATE);
     cJSON *state_json = cJSON_CreateObject();
-    cJSON_AddNumberToObject(state_json, "data", &state);
+    cJSON_AddNumberToObject(state_json, "data", (double)state);
 
     char *data = cJSON_Print(state_json);
 

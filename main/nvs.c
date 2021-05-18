@@ -7,7 +7,7 @@
 #include "freertos/FreeRTOS.h"
 #include "esp_system.h"
 
-#include ROOM_LEN 45
+#define ROOM_LEN 45
 
 void nvs_init() {
     esp_err_t ret = nvs_flash_init();
@@ -42,9 +42,9 @@ char* nvs_get_room() {
 
     if(res_nvs == ESP_ERR_NVS_NOT_FOUND) {
         ESP_LOGE("NVS", "Namespace: storage, not found");
-        return NULL:
+        return NULL;
     }
-    esp_err_t res = nvs_get_str(partition_handl, "room", &value);
+    esp_err_t res = nvs_get_str(partition_handle, "room", value, ROOM_LEN);
 
     switch (res) {
         case ESP_OK:
