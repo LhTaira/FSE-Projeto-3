@@ -40,7 +40,6 @@ void trataComunicacaoComServidor(void* params) {
     // int humidity = 20 + (int)((float)rand() / (float)(RAND_MAX / 10.0));
     short int temperature = 0;
     short int humidity = 0;
-    printf("Fuckme\n");
     dht_read_data(DHT_TYPE_DHT11, DHT11_PIN, &humidity, &temperature);
 
     mqtt_send_temperature((int)temperature);

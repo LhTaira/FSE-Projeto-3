@@ -82,8 +82,6 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event) {
     case MQTT_EVENT_CONNECTED:
       ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
       xSemaphoreGive(conexaoMQTTSemaphore);
-      printf("Am i gay?\n");
-      printf("Am i gay?2\n");
       break;
     case MQTT_EVENT_DISCONNECTED:
       ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
@@ -209,8 +207,10 @@ void mqtt_send_humidity(int umidity) {
 
 void mqtt_send_state(int state) {
   char *topic = get_topic(TOPIC_STATE);
+  char *mac_address = get_mac_address();
   cJSON *state_json = cJSON_CreateObject();
   cJSON_AddNumberToObject(state_json, "data", (double)state);
+  cJSON_AddStringToObject(state_json, "id", mac_address);
 
   char *data = cJSON_Print(state_json);
 
@@ -219,4 +219,5 @@ void mqtt_send_state(int state) {
   free(topic);
   free(state_json);
   free(data);
+  free(mac_address);
 }

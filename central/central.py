@@ -23,14 +23,14 @@ def registerPendingDevice(data):
         "id": json_data['id']
     })
 
-def registerDevice():
-    device = APP_DATE[devices][-1]
-    json_data = '{"room": \"'  + device.room + '\"}'
+def registerDevice(device):
+    # device = APP_DATA['devices'][-1]
+    json_data = '{"room": \"'  + device['room'] + '\"}'
     
-    client.publish("fse2020/{}/dispositivos/{}".format(MATRICULA, device.id), json_data)
+    client.publish("fse2020/{}/dispositivos/{}".format(MATRICULA, device['id']), json_data)
     
 def toggleLED(device):
-    client.publish("fse2020/{}/{}/LED".format(MATRICULA, device.room))
+    client.publish("fse2020/{}/{}/LED".format(MATRICULA, device['room']))
     
 def updateTemperature(data):
     json_data = json.loads(data)
@@ -61,17 +61,20 @@ def handleUserRegister(stdscr, index):
     stdscr.clear()
     
     device = APP_DATA['pending_devices'][index]
-    
     stdscr.addstr("Insira o comodo desejado: ")
-    room = input()
+    stdscr.refresh()
+    # room = input()
+    room = "Fonk"
     
-    APP_DATA['devices'][device.id] = {
+    APP_DATA['devices'][device["id"]] = {
         "room": room,
         "temperature": -1,
         "humidity": -1,
-        "state": 0
+        "state": 0,
+        "id":device["id"]
     }
-    registerDevice();
+    print("olar")
+    registerDevice(APP_DATA['devices'][device["id"]]);
     
     del APP_DATA['pending_devices'][index]
 
@@ -113,6 +116,7 @@ def handleUserInput(stdscr):
     stdscr.addstr("================---- -----================\n")
     
     user_input = stdscr.getch()
+
     handleUserAction(stdscr, user_input)
     
     curses.noecho()
@@ -122,7 +126,8 @@ def displayInformation(stdscr):
     stdscr.clear()
     
     stdscr.addstr("--DISPOSITIVOS--\n")
-    for device in APP_DATA['devices']:
+    for device in APP_DATA['devices'].values():
+        print(APP_DATA['devices'])
         stdscr.addstr("ID: {}\nCOMODO: {}\nTEMPERATURA: {}\nUMIDADE: {}\nESTADO: {}\n\n".format(device['id'], device['room'], device['temperature'], device['humidity'], device['state']))
     
     stdscr.addstr("--DISPOSITIVOS PENDENTES--\n")
@@ -136,6 +141,7 @@ def interface_loop(stdscr):
     while(True):
         if(checkInput(stdscr)):
             handleUserInput(stdscr)
+            print("dong")
             continue
             
         displayInformation(stdscr)
@@ -151,7 +157,7 @@ def init_interface():
     
 
 def init_client():
-    client = mqtt.Client()
+    
     client.on_connect = on_connect
     client.on_message = on_message
 
@@ -181,6 +187,7 @@ def on_message(client, userdata, msg):
         updateState(msg.payload)
     
     print(msg.topic + " " + str(msg.payload))
-    
+
+client = mqtt.Client()
 init_client()
 init_interface()
