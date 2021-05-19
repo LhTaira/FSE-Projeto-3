@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 
 MATRICULA = "170109208"
-REGISTER_TOPIC = "fse2020/" + MATRICULA + "/dispositivos"
+REGISTER_TOPIC = "fse2020/" + MATRICULA + "/dispositivos/+"
 TEMPERATURE_TOPIC = "fse2020/" + MATRICULA + "/+/temperatura"
 HUMIDITY_TOPIC = "fse2020/" + MATRICULA + "/+/umidade"
 STATE_TOPIC = "fse2020/" + MATRICULA + "/+/estado"
