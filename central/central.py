@@ -5,12 +5,14 @@ REGISTER_TOPIC = "fse2020/" + MATRICULA + "/dispositivos/+"
 TEMPERATURE_TOPIC = "fse2020/" + MATRICULA + "/+/temperatura"
 HUMIDITY_TOPIC = "fse2020/" + MATRICULA + "/+/umidade"
 STATE_TOPIC = "fse2020/" + MATRICULA + "/+/estado"
+LED_TOPIC = "fse2020/" + MATRICULA + "/+/led"
 
 def on_connect(client, userdata, flags, rc):
 	client.subscribe(REGISTER_TOPIC)
 	client.subscribe(TEMPERATURE_TOPIC)
 	client.subscribe(HUMIDITY_TOPIC)
 	client.subscribe(STATE_TOPIC)
+	client.subscribe(LED_TOPIC)
 	
 def on_message(client, userdata, msg):
     print(msg.topic + " " + str(msg.payload))

@@ -10,7 +10,7 @@
 #include "freertos/task.h"
 
 xQueueHandle filaDeInterrupcao;
-
+int led_value = 0;
 void gpio_isr_handler(void *args) {
   int pino = (int)args;
   xQueueSendFromISR(filaDeInterrupcao, &pino, NULL);
@@ -43,7 +43,15 @@ void trataInterrupcaoBotao(void *params) {
   }
 }
 
-void toggle_led() {}
+void toggle_led() {
+  if(led_value == 0) {
+    gpio_set_level(LED_1, 1);
+    led_value = 1;
+  } else {
+    gpio_set_level(LED_1, 0);
+    led_value = 0;
+  }
+}
 void gpio_init() {
   // Configuração dos pinos dos LEDs
   gpio_pad_select_gpio(LED_1);
@@ -68,4 +76,5 @@ void gpio_init() {
 
   gpio_install_isr_service(0);
   gpio_isr_handler_add(BOTAO, gpio_isr_handler, (void *)BOTAO);
+  gpio_set_level(LED_1, 0);
 }

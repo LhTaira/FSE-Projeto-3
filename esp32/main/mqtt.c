@@ -19,6 +19,7 @@
 #include "lwip/sockets.h"
 #include "mqtt_client.h"
 #include "nvs.h"
+#include "gpio.h"
 
 #define TAG "MQTT"
 
@@ -111,7 +112,12 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event) {
         strcpy(room, cJSON_GetObjectItem(data_json, "room")->valuestring);
         nvs_save_room(room);
         xSemaphoreGive(registerDeviceSemaphore);
+
+        char *topic = get_topic(TOPIC_LED);
+        esp_mqtt_client_subscribe(client, topic, 0);
+
       } else {
+        toggle_led();
         printf("LED to be implemented.");
       }
 
